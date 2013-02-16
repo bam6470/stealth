@@ -271,8 +271,8 @@ namespace Rogue
         {
             spriteBatch.Draw(healthBack, staminaPosition, null, Color.White, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 1);
             spriteBatch.Draw(staminaFront, staminaPosition, new Rectangle(0, 0, rollCD * 256 / 100, 32), Color.White, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 1);
-            spriteBatch.Draw(healthBack, healthPosition, null, Color.White, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 1);
-            spriteBatch.Draw(healthFront, healthPosition, new Rectangle(0, 0,(int)health * 256 / 100, 32), Color.White, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 1);
+            //spriteBatch.Draw(healthBack, healthPosition, null, Color.White, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 1);
+            //spriteBatch.Draw(healthFront, healthPosition, new Rectangle(0, 0,(int)health * 256 / 100, 32), Color.White, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 1);
         }
         
     }
