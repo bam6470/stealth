@@ -24,10 +24,6 @@ namespace Rogue
         //roll
         int roll;
         int rollCD;
-        //health
-        Texture2D healthBack, healthFront;
-        Vector2 healthPosition;
-        double health = 100;
 
         Tile[,] tiles; // 9 nearest tiles
 
@@ -40,7 +36,7 @@ namespace Rogue
        
         
 
-        public Player(Texture2D Texture, Vector2 Position, Vector2 DrawPosition, Texture2D StaminaB, Texture2D StaminaF,Texture2D HealthB, Texture2D HealthF)
+        public Player(Texture2D Texture, Vector2 Position, Vector2 DrawPosition, Texture2D StaminaB, Texture2D StaminaF)
         {
             drawPosition = DrawPosition;
             position = Position;
@@ -52,50 +48,48 @@ namespace Rogue
             staminaBack = StaminaB;
             staminaFront = StaminaF;
             staminaPosition = new Vector2(0,DrawPosition.Y*2 - 64);
-            //health
-            healthBack = HealthB;
-            healthFront = HealthF;
-            healthPosition = new Vector2(0, DrawPosition.Y * 2 - 32);
+        }
+
+        public void Update(Tile[,] Tiles)
+        {
+
+            mouse = Mouse.GetState();//update mouse 
+            keyState = Keyboard.GetState();
+            velocity = Vector2.Zero; //reset velocity
+            if (roll == 0)
+            {
+                UpdateKeyboard();
+                rotation = (float)(Math.Atan2(mouse.Y - position.Y - offset.Y, mouse.X - position.X - offset.X) + .5 * Math.PI); // update rotation
+            }
+            else
+            {
+                roll--;
+                velocity = new Vector2(-(float)Math.Cos(rotation + (.5 * Math.PI)) * 10, -(float)Math.Sin(rotation + (.5 * Math.PI)) * 10);
+            }
+            if (rollCD < 100)
+                rollCD++;
+            tiles = Tiles; //update nearby tiles
+            CollisionWithTiles(tiles);
+            position += velocity;
+
+            offset.X = drawPosition.X - position.X;//update X offset
+            offset.Y = drawPosition.Y - position.Y;//update Y offset
+
+
+            mousePrevious = mouse;
+            keyStatePrevious = keyState;
+        }
+
+        // Draws the player
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(texture, drawPosition, null, Color.White, rotation, new Vector2(16, 16), 1f, SpriteEffects.None, 1);
+            // Draws the display
+            DrawHUD(spriteBatch);
         }
 
         private void UpdateKeyboard()
         {
-
-
-            //if (isSprinting)
-            //{
-            //    if (mouse.RightButton == ButtonState.Pressed &&  stamina > 5)
-            //    {
-            //        speed = 8;
-            //        stamina -= 10;
-            //        isSprinting = true;
-            //    }
-            //    else
-            //    {
-            //        speed = 3;
-            //        stamina += 1;
-            //        if (stamina > 400)
-            //            stamina = 400;
-            //        isSprinting = false;
-            //    }
-            //}
-            //else if (mouse.RightButton == ButtonState.Pressed && mousePrevious.RightButton == ButtonState.Released && stamina >275)
-            //{
-            //    speed = 8;
-            //    stamina -= 10;
-            //    isSprinting = true;
-
-            //}
-            //else
-            //{
-            //    speed = 3;
-            //    stamina += 1;
-            //    if (stamina > 400)
-            //        stamina = 400;
-            //    isSprinting = false;
-            //}
-
-
             if (mouse.RightButton == ButtonState.Pressed && rollCD == 100)
             {
                 roll = 10;
@@ -270,43 +264,9 @@ namespace Rogue
             
         }
 
-        public void Update(Tile[,] Tiles)
-        {
-            
-            mouse = Mouse.GetState();//update mouse 
-            keyState = Keyboard.GetState();
-            velocity = Vector2.Zero; //reset velocity
-            if (roll == 0)
-            {
-                UpdateKeyboard();
-                rotation = (float)(Math.Atan2(mouse.Y - position.Y - offset.Y, mouse.X - position.X - offset.X) + .5 * Math.PI); // update rotation
-            }
-            else
-            {
-                roll--;
-                velocity = new Vector2(-(float)Math.Cos(rotation + (.5 * Math.PI)) * 10, -(float)Math.Sin(rotation + (.5 * Math.PI)) * 10);
-            }
-            if (rollCD < 100)
-                rollCD++;
-            tiles = Tiles; //update nearby tiles
-           
+        
 
-            
-            
-            health -= .1;//Health testing
-
-            
-            CollisionWithTiles(tiles);
-            position += velocity;
-            
-            offset.X = drawPosition.X - position.X;//update X offset
-            offset.Y = drawPosition.Y - position.Y;//update Y offset
-
-
-            mousePrevious = mouse;
-            keyStatePrevious = keyState;
-        }
-
+        // Draws the display
         public void DrawHUD(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(healthBack, staminaPosition, null, Color.White, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 1);
@@ -314,11 +274,6 @@ namespace Rogue
             spriteBatch.Draw(healthBack, healthPosition, null, Color.White, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 1);
             spriteBatch.Draw(healthFront, healthPosition, new Rectangle(0, 0,(int)health * 256 / 100, 32), Color.White, 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 1);
         }
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(texture, drawPosition, null, Color.White, rotation, new Vector2(16, 16), 1f, SpriteEffects.None, 1);
-            DrawHUD(spriteBatch);
-        }
+        
     }
 }
