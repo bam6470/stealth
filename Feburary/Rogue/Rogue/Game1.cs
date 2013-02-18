@@ -15,8 +15,11 @@ namespace Rogue
     
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        public GraphicsDeviceManager graphics;
+        public SpriteBatch spriteBatch;
+        public DrawableGameComponent screen;
+        public Pointer pointer;
+        ScreenType screenSelect;
 
         public Game1()
         {
@@ -26,6 +29,17 @@ namespace Rogue
 
         protected override void Initialize()
         {
+            // Initialize screen slect
+            screenSelect = ScreenType.MainMenu;
+            screen = new MainMenu(this);
+            Components.Add(screen);
+            //((MainMenu)screen).Initialize();
+            //((MainMenu)screen).LoadContent();
+            ((MainMenu)screen).moveToPlayGame += changeScreen;
+
+            // Initialize the pointer
+            pointer = new Pointer(this);
+            Components.Add(pointer);
             base.Initialize();
         }
 
@@ -45,6 +59,32 @@ namespace Rogue
         protected override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
+        }
+
+        protected void changeScreen(object sender, ChangeScreenEventArgs args)
+        {
+            if (args.screenType == ScreenType.InGame)
+            {
+                Components.Remove(screen);
+                screen = new PlayGame(this);
+                Components.Add(screen);
+                ((PlayGame)screen).Initialize(this);
+            }
+        }
+    }
+    public enum ScreenType
+    {
+        MainMenu,
+        InGame
+    }
+
+    public class ChangeScreenEventArgs : EventArgs
+    {
+        public ScreenType screenType { get; set; }
+
+        public ChangeScreenEventArgs(ScreenType type)
+        {
+            screenType = type;
         }
     }
 }

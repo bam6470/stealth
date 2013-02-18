@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -26,18 +27,17 @@ namespace Rogue
             // TODO: Construct any child components here
         }
 
-        public override void Initialize(Game game)
+        public void Initialize(Game game)
         {
-            // TODO: Add your initialization code here
             game.IsMouseVisible = true;
+            graphics = ((Game1)game).graphics;
             graphics.PreferredBackBufferHeight = 600;
             graphics.PreferredBackBufferWidth = 800;
             graphics.ApplyChanges();
             LoadContent(game);
-            base.Initialize();
         }
 
-        protected override void LoadContent(Game game)
+        protected void LoadContent(Game game)
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -46,24 +46,21 @@ namespace Rogue
                                 new Vector2(100, 100),
                                 new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2),
                                 game.Content.Load<Texture2D>(@"images/staminaBack"),
-                                game.Content.Load<Texture2D>(@"images/staminaFront"),
-                                game.Content.Load<Texture2D>(@"images/HealthBack"),
-                                game.Content.Load<Texture2D>(@"images/HealthFront"));
+                                game.Content.Load<Texture2D>(@"images/staminaFront"));
             // creates the map object and fills the guard object
             map = new Map(game.Content.Load<Texture2D>("MapTest"));
             map.LoadMap(new StreamReader("MapTestText.txt"), game.Content.Load<Texture2D>("MapTest"));
             //testGuard = new Guard(new Vector2(0, 0), Content.Load<Texture2D>(@"images/guard"), 0, false, null);
-            base.LoadContent();
         }
 
         public override void Update(GameTime gameTime)
         {
             // TODO: Add your update code here
             player.Update(map.GetTiles(new Vector2()));
-            foreach (Guard g in guards)
-            {
-                g.Update(player, gameTime);
-            }
+            //foreach (Guard g in guards)
+            //{
+            //    g.Update(player, gameTime);
+            //}
             base.Update(gameTime);
         }
 
@@ -76,10 +73,10 @@ namespace Rogue
             // Draw the player
             player.Draw(spriteBatch);
             // Draw the guards
-            foreach (Guard g in guards)
-            {
-                g.Draw(spriteBatch, player);
-            }
+            //foreach (Guard g in guards)
+            //{
+            //    g.Draw(spriteBatch, player);
+            //}
             spriteBatch.End();
 
             base.Draw(gameTime);
